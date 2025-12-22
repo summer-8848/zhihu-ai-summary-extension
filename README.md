@@ -35,6 +35,10 @@
    - 选择 `zhihu-ai-summary-extension` 文件夹
    - 扩展安装完成！
 
+### 油猴脚本版
+
+嫌操作麻烦？试试油猴脚本版，[一键安装油猴脚本](https://greasyfork.org/zh-CN/scripts/559782-%E7%9F%A5%E4%B9%8Eai%E6%80%BB%E7%BB%93%E5%8A%A9%E6%89%8B?locale_override=1)。
+
 ## 使用说明
 
 ### 1. 配置 API
@@ -95,8 +99,7 @@ zhihu-ai-summary-extension/
 │   ├── icon.svg          # SVG 源文件
 │   ├── icon16.png        # 16x16 图标
 │   ├── icon48.png        # 48x48 图标
-│   ├── icon128.png       # 128x128 图标
-│   └── README.md         # 图标生成说明
+│   └── icon128.png       # 128x128 图标
 └── README.md             # 本文件
 ```
 
@@ -141,7 +144,6 @@ A: 在设置面板中：
 
 ### v1.0.0 (2024-12-22)
 - 初始版本发布
-- 从油猴脚本迁移到浏览器扩展
 - 支持文章、问题、回答的 AI 总结
 - 多账号管理功能
 - 自动总结功能

@@ -11,6 +11,15 @@
 - ⚙️ **灵活配置**：自定义 API 地址、密钥和模型
 - 🎨 **美观界面**：现代化的界面设计，无缝融入知乎页面
 
+### 文章总结
+![问题](./screenshot/文章.png)
+
+### 问题总结
+![问题](./screenshot/问题.png)
+
+### 回答总结
+![回答](./screenshot/回答.png)
+
 ## 安装方法
 
 ### Chrome / Edge 浏览器
@@ -44,6 +53,7 @@
      - **模型名称**：如 `gpt-4o-mini`、`gpt-4`等
    - 点击"测试连接"确认配置正确
    - 点击"添加账号"保存
+4. 支持多账号一键切换
 
 ### 2. 使用 AI 总结
 
@@ -73,23 +83,6 @@
 - 勾选"自动总结"选项
 - 页面加载后会自动调用 AI 生成总结
 
-## API 配置说明
-
-### 支持的 API 提供商
-
-本扩展支持任何兼容 OpenAI API 格式的服务：
-
-- **OpenAI 官方**：`https://api.openai.com/v1/chat/completions`
-- **Azure OpenAI**：`https://your-resource.openai.azure.com/openai/deployments/your-deployment/chat/completions?api-version=2024-02-15-preview`
-- **第三方代理**：各类 OpenAI API 代理服务
-- **本地部署**：如 LocalAI、Ollama（需配置兼容接口）
-
-### 推荐模型
-
-- **高性价比**：`gpt-4o-mini`、`gpt-3.5-turbo`
-- **高质量**：`gpt-4o`、`gpt-4-turbo`
-- **其他**：任何支持的模型名称
-
 ## 文件结构
 
 ```
@@ -106,14 +99,6 @@ zhihu-ai-summary-extension/
 │   └── README.md         # 图标生成说明
 └── README.md             # 本文件
 ```
-
-## 从油猴脚本迁移
-
-如果你之前使用的是油猴脚本版本：
-
-1. 浏览器扩展会自动读取油猴脚本保存的配置
-2. 首次运行时会自动迁移 API 配置
-3. 两个版本可以共存，但建议只使用一个
 
 ## 常见问题
 
@@ -137,9 +122,6 @@ A: 在设置面板中：
 - 点击该账号卡片切换为当前账号
 - 或删除旧账号
 
-### Q: 扩展图标显示不正常？
-A: 参考 `icons/README.md` 生成对应尺寸的图标文件
-
 ## 隐私说明
 
 - 本扩展不收集任何用户数据
@@ -154,15 +136,6 @@ A: 参考 `icons/README.md` 生成对应尺寸的图标文件
 1. 修改代码后，在 `chrome://extensions/` 中点击"重新加载"
 2. 打开浏览器开发者工具（F12）查看控制台日志
 3. 可以在 content.js 中添加 `console.log()` 进行调试
-
-### 打包发布
-
-如需发布到 Chrome Web Store：
-
-1. 确保所有图标文件已生成
-2. 在 `chrome://extensions/` 点击"打包扩展程序"
-3. 选择 `zhihu-ai-summary-extension` 文件夹
-4. 生成 .crx 文件和私钥
 
 ## 更新日志
 
@@ -183,6 +156,7 @@ MIT License
 - 问题反馈：[GitHub Issues](https://github.com/summer-8848/zhihu-ai-summary/issues)
 - 功能建议：欢迎提交 Issue 或 Pull Request
 - 贡献代码：Fork 本项目后提交 PR
+- 提交到Chrome应用商店：由于向[Chrome应用商店](https://chromewebstore.google.com/)发布应用需通过认证流程，该流程较为繁琐。如需使用，可自行Fork代码并提交至应用商店。
 
 ---
 

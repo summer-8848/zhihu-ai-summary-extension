@@ -8,11 +8,11 @@
     "activeTab"
   ],
   "host_permissions": [
-    "https://www.zhihu.com/*"
+    "https://*.zhihu.com/*"
   ],
   "content_scripts": [
     {
-      "matches": ["https://www.zhihu.com/*"],
+      "matches": ["https://*.zhihu.com/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }

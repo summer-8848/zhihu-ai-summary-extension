@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知乎AI总结助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 400px;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        h1 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .version {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-item {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .status.configured {
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: #52c41a;
+        }
+
+        .status.not-configured {
+            background: #fff7e6;
+            border: 1px solid #ffd591;
+            color: #fa8c16;
+        }
+
+        .icon {
+            font-size: 16px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            margin-top: 16px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .account-info {
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .account-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .account-detail {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🤖</div>
+        <h1>知乎AI总结助手</h1>
+        <div class="version">v1.0.0</div>
+    </div>
+
+    <div id="status-container"></div>
+
+    <div class="section">
+        <div class="section-title">
+            <span class="icon">📖</span>
+            使用说明
+        </div>
+        <div class="info-item">
+            <span class="info-label">1.</span> 访问知乎文章或问题页面
+        </div>
+        <div class="info-item">
+            <span class="info-label">2.</span> 点击页面上的"AI总结"按钮
+        </div>
+        <div class="info-item">
+            <span class="info-label">3.</span> 等待AI分析并展示总结内容
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span class="icon">⚙️</span>
+            快捷操作
+        </div>
+        <button class="button" id="open-settings">打开设置面板</button>
+    </div>
+
+    <div class="footer">
+        使用问题？<a href="https://github.com/summer-8848/zhihu-ai-summary/issues" target="_blank">查看文档</a>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

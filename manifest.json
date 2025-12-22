@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "知乎 AI 总结助手",
+  "version": "1.0.0",
+  "description": "为知乎文章、问题和回答提供 AI 智能总结功能",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://www.zhihu.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.zhihu.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

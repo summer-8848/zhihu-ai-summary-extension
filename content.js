@@ -499,6 +499,7 @@
             const accounts = await storage.get('AI_ACCOUNTS', []);
             const currentAccountId = await storage.get('CURRENT_ACCOUNT_ID', '');
             const autoSummarize = await storage.get('AUTO_SUMMARIZE', false);
+            const minAnswerLength = await storage.get('MIN_ANSWER_LENGTH', 200);
 
             const modal = document.createElement('div');
             modal.className = 'zhihu-ai-modal';
@@ -507,7 +508,7 @@
                     <div class="zhihu-ai-modal-header">
                         <div class="zhihu-ai-modal-title">
                             <svg width="24" height="24" viewBox="0 0 1024 1024" fill="#667eea"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"/><path d="M464 336a48 48 0 1 0 96 0 48 48 0 1 0-96 0z m72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z"/></svg>
-                            配置 OpenAI API
+                            配置 OpenAI API（浏览器插件版）
                         </div>
                         <button class="zhihu-ai-modal-close">×</button>
                     </div>
@@ -527,6 +528,11 @@
                                         <input type="checkbox" id="zhihu-ai-auto-summarize" ${autoSummarize ? 'checked' : ''} style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;">
                                         <span>自动总结（页面加载后自动调用AI总结）</span>
                                     </label>
+                                </div>
+                                <div class="zhihu-ai-config-item">
+                                    <label class="zhihu-ai-config-label">回答最少字数:</label>
+                                    <input type="number" class="zhihu-ai-config-input" id="zhihu-ai-min-answer-length" value="${minAnswerLength}" min="0" placeholder="200" style="width: 100%;">
+                                    <div style="margin-top: 6px; font-size: 12px; color: #666;">回答字数少于此值时,不自动总结,仅显示提示信息</div>
                                 </div>
                                 <div class="zhihu-ai-config-item">
                                     <button class="zhihu-ai-config-save" id="save-settings-btn">保存设置</button>
@@ -723,7 +729,9 @@
 
             modal.querySelector('#save-settings-btn').addEventListener('click', async () => {
                 const autoSum = modal.querySelector('#zhihu-ai-auto-summarize').checked;
+                const minLength = parseInt(modal.querySelector('#zhihu-ai-min-answer-length').value) || 200;
                 await storage.set('AUTO_SUMMARIZE', autoSum);
+                await storage.set('MIN_ANSWER_LENGTH', minLength);
                 alert('设置已保存！');
             });
 
@@ -817,8 +825,27 @@
 
                 const button = this.ui.createButton(async () => {
                     const content = await ContentExtractor.extractAnswer(answerItem);
-                    if (content.content) this.ui.showInlineSummary(content, 'answer', null, answerItem);
-                    else alert('未能提取到回答内容');
+                    if (!content.content) {
+                        alert('未能提取到回答内容');
+                        return;
+                    }
+
+                    const minAnswerLength = await storage.get('MIN_ANSWER_LENGTH', 200);
+                    const contentLength = content.content.length;
+
+                    if (contentLength < minAnswerLength) {
+                        const container = this.ui.createResultContainer('answer');
+                        const richContent = answerItem.querySelector('.RichContent-inner');
+                        if (richContent) richContent.insertBefore(container, richContent.firstChild);
+
+                        const body = container.querySelector('.zhihu-ai-answer-result-body');
+                        body.innerHTML = `<div style="color: #666; margin-bottom: -15px;">
+                            <p>当回答少于 ${minAnswerLength} 字（当前 ${contentLength} 字）时，不会自动总结，但仍可手动进行总结。</p>
+                        </div>`;
+                        return;
+                    }
+
+                    this.ui.showInlineSummary(content, 'answer', null, answerItem);
                 });
                 button.classList.add('zhihu-ai-summary-btn-answer');
                 authorHead.appendChild(button);

@@ -11,14 +11,17 @@
 - ⚙️ **灵活配置**：自定义 API 地址、密钥和模型
 - 🎨 **美观界面**：现代化的界面设计，无缝融入知乎页面
 
+### 动图预览
+![动图预览](https://github.com/summer-8848/zhihu-ai-summary-tampermonkey/raw/main/screenshot/preview.gif)
+
 ### 文章总结
-![文章](./screenshot/文章.png)
+![文章](https://github.com/summer-8848/zhihu-ai-summary-tampermonkey/raw/main/screenshot/文章.png)
 
 ### 问题总结
-![问题](./screenshot/问题.png)
+![问题](https://github.com/summer-8848/zhihu-ai-summary-tampermonkey/raw/main/screenshot/问题.png)
 
 ### 回答总结
-![回答](./screenshot/回答.png)
+![回答](https://github.com/summer-8848/zhihu-ai-summary-tampermonkey/raw/main/screenshot/回答.png)
 
 ## 安装方法
 

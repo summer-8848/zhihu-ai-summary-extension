@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "知乎 AI 总结助手",
-  "version": "1.0.0",
-  "description": "为知乎文章、问题和回答提供 AI 智能总结功能",
+  "version": "1.2.0",
+  "description": "为知乎文章、问题和回答提供 AI 智能总结功能，支持多账号管理和自动总结",
   "permissions": [
     "storage",
     "activeTab"
@@ -18,7 +18,13 @@
     }
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "icons": {
     "16": "icons/icon16.png",

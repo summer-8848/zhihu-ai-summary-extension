@@ -162,13 +162,31 @@
             font-size: 12px;
             color: #666;
         }
+
+        .features {
+            margin-top: 8px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .feature-icon {
+            color: #667eea;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="logo">🤖</div>
         <h1>知乎AI总结助手</h1>
-        <div class="version">v1.0.0</div>
+        <div class="version">浏览器插件版 v1.2.0</div>
     </div>
 
     <div id="status-container"></div>
@@ -191,6 +209,31 @@
 
     <div class="section">
         <div class="section-title">
+            <span class="icon">✨</span>
+            核心功能
+        </div>
+        <div class="features">
+            <div class="feature-item">
+                <span class="feature-icon">•</span>
+                <span>文章/问题/回答智能总结</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">•</span>
+                <span>多账号管理，快速切换</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">•</span>
+                <span>自动总结功能（可配置）</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">•</span>
+                <span>支持所有OpenAI兼容API</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
             <span class="icon">⚙️</span>
             快捷操作
         </div>
@@ -198,7 +241,7 @@
     </div>
 
     <div class="footer">
-        使用问题？<a href="https://github.com/summer-8848/zhihu-ai-summary/issues" target="_blank">查看文档</a>
+        使用问题？<a href="https://github.com/summer-8848/zhihu-ai-summary-extension/issues" target="_blank">反馈建议</a>
     </div>
 
     <script src="popup.js"></script>

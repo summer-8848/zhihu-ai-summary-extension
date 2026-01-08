@@ -530,7 +530,8 @@
                 if (elementHeight < maxPanelHeight) {
                     panel.classList.add('short');
                     const panelHeight = Math.max(minPanelHeight, elementHeight);
-                    panel.style.height = `${panelHeight}px`;
+                    panel.style.height = 'auto';
+                    panel.style.maxHeight = `${panelHeight}px`;
                 } else {
                     panel.classList.add('long');
                 }

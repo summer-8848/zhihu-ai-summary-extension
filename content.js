@@ -18,10 +18,7 @@
     };
 
     const STYLES = `
-        :root {
-            --zhihu-ai-primary-color: #667eea;
-            --zhihu-ai-secondary-color: #764ba2;
-        }
+        :root { --zhihu-ai-primary-color: #667eea; --zhihu-ai-secondary-color: #764ba2; }
         .Question-sideColumn--sticky { display: none !important; }
         .zhihu-ai-side-panel { left: 100%; margin-left: 30px; width: 400px; z-index: 1; background: white; border-radius: 8px; box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1); transition: opacity 0.3s ease; }
         .zhihu-ai-side-panel.short { position: absolute; top: 0; height: 15vh; overflow-y: auto; }

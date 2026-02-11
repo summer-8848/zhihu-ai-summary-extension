@@ -61,13 +61,14 @@
         .zhihu-ai-config-panel { padding: 20px 0; }
         .zhihu-ai-config-item { margin-bottom: 16px; }
         .zhihu-ai-config-label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
-        .zhihu-ai-config-input { width: 100%; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; transition: border-color 0.3s; }
+        .zhihu-ai-config-input { width: 100%; padding: 10px 0 10px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; transition: border-color 0.3s; }
         .zhihu-ai-config-input:focus { outline: none; border-color: #667eea; }
         .zhihu-ai-config-save { width: 100%; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.3s; }
         .zhihu-ai-config-save:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
         .zhihu-ai-config-test { width: 100%; padding: 10px; background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.3s; margin-bottom: 12px; }
         .zhihu-ai-config-test:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4); }
         .zhihu-ai-config-test:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .zhihu-ai-config-btn-half.zhihu-ai-config-test { margin-bottom: 0; }
         .zhihu-ai-test-result { padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; line-height: 1.6; }
         .zhihu-ai-test-result.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
         .zhihu-ai-test-result.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
@@ -82,10 +83,19 @@
         .zhihu-ai-account-btn { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.2s; }
         .zhihu-ai-account-btn-edit { background: #e6f7ff; color: #1890ff; }
         .zhihu-ai-account-btn-edit:hover { background: #bae7ff; }
+        .zhihu-ai-account-btn-copy { background: #fff7e6; color: #fa8c16; }
+        .zhihu-ai-account-btn-copy:hover { background: #ffe7ba; }
         .zhihu-ai-account-btn-delete { background: #fff2f0; color: #ff4d4f; }
         .zhihu-ai-account-btn-delete:hover { background: #ffccc7; }
         .zhihu-ai-add-account-btn { width: 100%; padding: 10px; background: white; border: 2px dashed #d9d9d9; border-radius: 6px; cursor: pointer; font-size: 14px; color: #666; transition: all 0.3s; }
         .zhihu-ai-add-account-btn:hover { border-color: #667eea; color: #667eea; }
+        .zhihu-ai-config-btn-group { display: flex; gap: 8px; margin-bottom: 12px; }
+        .zhihu-ai-config-btn-half { flex: 1; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.3s; }
+        .zhihu-ai-config-btn-half:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .zhihu-ai-config-btn-secondary { background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%); }
+        .zhihu-ai-config-btn-secondary:hover { box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4); }
+        .zhihu-ai-config-btn-warning { background: linear-gradient(135deg, #fa8c16 0%, #d46b08 100%); }
+        .zhihu-ai-config-btn-warning:hover { box-shadow: 0 4px 12px rgba(250, 140, 22, 0.4); }
         .zhihu-ai-tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid #f0f0f0; }
         .zhihu-ai-tab { padding: 10px 16px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.3s; color: #666; }
         .zhihu-ai-tab.active { color: #667eea; border-bottom-color: #667eea; font-weight: 600; }
@@ -607,6 +617,12 @@
                                     <div style="margin-top: 6px; font-size: 12px; color: #666;">回答字数少于此值时,不自动总结,仅显示提示信息(手动点击仍可总结)</div>
                                 </div>
                                 <div class="zhihu-ai-config-item">
+                                    <div class="zhihu-ai-config-btn-group">
+                                        <button class="zhihu-ai-config-btn-half zhihu-ai-config-btn-secondary" id="export-config-btn">📋 复制配置</button>
+                                        <button class="zhihu-ai-config-btn-half zhihu-ai-config-btn-warning" id="import-config-btn">📥 导入配置</button>
+                                    </div>
+                                </div>
+                                <div class="zhihu-ai-config-item">
                                     <button class="zhihu-ai-config-save" id="save-settings-btn">保存设置</button>
                                 </div>
                             </div>
@@ -632,6 +648,7 @@
                             <div class="zhihu-ai-account-detail">${account.model} • ${account.apiUrl.length > 40 ? account.apiUrl.substring(0, 40) + '...' : account.apiUrl}</div>
                         </div>
                         <div class="zhihu-ai-account-actions">
+                            <button class="zhihu-ai-account-btn zhihu-ai-account-btn-copy" data-id="${account.id}">复制</button>
                             <button class="zhihu-ai-account-btn zhihu-ai-account-btn-edit" data-id="${account.id}">编辑</button>
                             <button class="zhihu-ai-account-btn zhihu-ai-account-btn-delete" data-id="${account.id}">删除</button>
                         </div>
@@ -666,6 +683,111 @@
                         }
                     });
                 });
+
+                accountList.querySelectorAll('.zhihu-ai-account-btn-copy').forEach(btn => {
+                    btn.addEventListener('click', () => showCopyAccountForm(btn.dataset.id));
+                });
+            };
+
+            const showCopyAccountForm = async (sourceId) => {
+                const accounts = await storage.get('AI_ACCOUNTS', []);
+                const sourceAccount = accounts.find(acc => acc.id === sourceId);
+                if (!sourceAccount) return;
+
+                const formModal = document.createElement('div');
+                formModal.className = 'zhihu-ai-modal';
+                formModal.style.zIndex = '10001';
+                formModal.innerHTML = `
+                    <div class="zhihu-ai-modal-content" style="max-width: 500px;">
+                        <div class="zhihu-ai-modal-header">
+                            <div class="zhihu-ai-modal-title">复制账号</div>
+                            <button class="zhihu-ai-modal-close">×</button>
+                        </div>
+                        <div class="zhihu-ai-modal-body">
+                            <div class="zhihu-ai-config-panel">
+                                <div class="zhihu-ai-config-item">
+                                    <label class="zhihu-ai-config-label">备注名称:</label>
+                                    <input type="text" class="zhihu-ai-config-input" id="account-name" value="${sourceAccount.name} (副本)" placeholder="默认使用API地址">
+                                </div>
+                                <div class="zhihu-ai-config-item">
+                                    <label class="zhihu-ai-config-label">API接口地址:</label>
+                                    <input type="text" class="zhihu-ai-config-input" id="account-url" value="${sourceAccount.apiUrl}" placeholder="https://api.openai.com/v1/chat/completions">
+                                </div>
+                                <div class="zhihu-ai-config-item">
+                                    <label class="zhihu-ai-config-label">API Key:</label>
+                                    <input type="password" class="zhihu-ai-config-input" id="account-key" value="${sourceAccount.apiKey}" placeholder="sk-...">
+                                </div>
+                                <div class="zhihu-ai-config-item">
+                                    <label class="zhihu-ai-config-label">模型名称:</label>
+                                    <input type="text" class="zhihu-ai-config-input" id="account-model" value="${sourceAccount.model}" placeholder="gpt-4o-mini">
+                                </div>
+                                <div id="test-result-container"></div>
+                                <div class="zhihu-ai-config-btn-group">
+                                    <button class="zhihu-ai-config-btn-half zhihu-ai-config-test zhihu-ai-config-btn-secondary" id="test-account-btn">测试连接</button>
+                                    <button class="zhihu-ai-config-btn-half zhihu-ai-config-save" id="save-account-btn">添加账号</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                formModal.querySelector('.zhihu-ai-modal-close').addEventListener('click', () => formModal.remove());
+                formModal.addEventListener('click', e => { if (e.target === formModal) formModal.remove(); });
+
+                formModal.querySelector('#test-account-btn').addEventListener('click', async () => {
+                    const url = formModal.querySelector('#account-url').value.trim();
+                    const key = formModal.querySelector('#account-key').value.trim();
+                    const model = formModal.querySelector('#account-model').value.trim();
+                    const testBtn = formModal.querySelector('#test-account-btn');
+                    const resultContainer = formModal.querySelector('#test-result-container');
+
+                    if (!url || !key || !model) {
+                        resultContainer.innerHTML = '<div class="zhihu-ai-test-result error">请填写完整信息</div>';
+                        return;
+                    }
+
+                    testBtn.disabled = true;
+                    testBtn.textContent = '测试中...';
+                    resultContainer.innerHTML = '<div class="zhihu-ai-test-result" style="background: #f0f0f0; border: 1px solid #d9d9d9; color: #666;">正在测试连接...</div>';
+
+                    const result = await this.apiClient.testConnection(key, url, model);
+                    if (result.success) {
+                        resultContainer.innerHTML = '<div class="zhihu-ai-test-result success">连接成功！</div>';
+                    } else {
+                        resultContainer.innerHTML = `<div class="zhihu-ai-test-result error">${result.message}</div>`;
+                    }
+                    testBtn.disabled = false;
+                    testBtn.textContent = '测试连接';
+                });
+
+                formModal.querySelector('#save-account-btn').addEventListener('click', async () => {
+                    const name = formModal.querySelector('#account-name').value.trim() || formModal.querySelector('#account-url').value.trim();
+                    const url = formModal.querySelector('#account-url').value.trim();
+                    const key = formModal.querySelector('#account-key').value.trim();
+                    const model = formModal.querySelector('#account-model').value.trim();
+                    const resultContainer = formModal.querySelector('#test-result-container');
+
+                    if (!url || !key || !model) {
+                        resultContainer.innerHTML = '<div class="zhihu-ai-test-result error">请填写完整信息</div>';
+                        return;
+                    }
+
+                    const newAccount = {
+                        id: Date.now().toString(),
+                        name: name,
+                        apiUrl: url,
+                        apiKey: key,
+                        model: model
+                    };
+
+                    const accounts = await storage.get('AI_ACCOUNTS', []);
+                    accounts.push(newAccount);
+                    await storage.set('AI_ACCOUNTS', accounts);
+                    formModal.remove();
+                    renderAccounts();
+                });
+
+                document.body.appendChild(formModal);
             };
 
             const showAccountForm = async (editId = null) => {
@@ -700,9 +822,9 @@
                                     <input type="text" class="zhihu-ai-config-input" id="account-model" value="${editAccount?.model || ''}" placeholder="gpt-4o-mini">
                                 </div>
                                 <div id="test-result-container"></div>
-                                <div class="zhihu-ai-config-item">
-                                    <button class="zhihu-ai-config-test" id="test-account-btn">测试连接</button>
-                                    <button class="zhihu-ai-config-save" id="save-account-btn">${editId ? '保存修改' : '添加账号'}</button>
+                                <div class="zhihu-ai-config-btn-group">
+                                    <button class="zhihu-ai-config-btn-half zhihu-ai-config-test zhihu-ai-config-btn-secondary" id="test-account-btn">测试连接</button>
+                                    <button class="zhihu-ai-config-btn-half zhihu-ai-config-save" id="save-account-btn">${editId ? '保存修改' : '添加账号'}</button>
                                 </div>
                             </div>
                         </div>
@@ -798,6 +920,80 @@
             });
 
             modal.querySelector('#add-account-btn').addEventListener('click', () => showAccountForm());
+
+            modal.querySelector('#export-config-btn').addEventListener('click', async () => {
+                try {
+                    const config = {
+                        accounts: await storage.get('AI_ACCOUNTS', []),
+                        currentAccountId: await storage.get('CURRENT_ACCOUNT_ID', ''),
+                        autoSummarize: await storage.get('AUTO_SUMMARIZE', false),
+                        minAnswerLength: await storage.get('MIN_ANSWER_LENGTH', 200)
+                    };
+                    
+                    const configJson = JSON.stringify(config, null, 2);
+                    
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(configJson);
+                        alert('配置已复制到剪贴板！');
+                    } else {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = configJson;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        alert('配置已复制到剪贴板！');
+                    }
+                } catch (error) {
+                    console.error('复制配置失败:', error);
+                    alert('复制配置失败，请手动复制控制台输出的配置');
+                }
+            });
+
+            modal.querySelector('#import-config-btn').addEventListener('click', async () => {
+                try {
+                    const configJson = prompt('请粘贴配置JSON：');
+                    if (!configJson) return;
+                    
+                    try {
+                        const config = JSON.parse(configJson);
+                        
+                        if (!config.accounts || !Array.isArray(config.accounts)) {
+                            throw new Error('配置格式错误：缺少有效的账号列表');
+                        }
+                        
+                        for (const account of config.accounts) {
+                            if (!account.id || !account.name || !account.apiUrl || !account.apiKey || !account.model) {
+                                throw new Error('配置格式错误：账号信息不完整');
+                            }
+                        }
+                        
+                        if (confirm('导入配置将覆盖现有设置，确定要继续吗？')) {
+                            await storage.set('AI_ACCOUNTS', config.accounts);
+                            await storage.set('CURRENT_ACCOUNT_ID', config.currentAccountId || config.accounts[0]?.id || '');
+                            await storage.set('AUTO_SUMMARIZE', config.autoSummarize !== undefined ? config.autoSummarize : false);
+                            await storage.set('MIN_ANSWER_LENGTH', config.minAnswerLength || 200);
+                            
+                            await this.apiClient.loadCurrentAccount();
+                            renderAccounts();
+                            
+                            const autoSumCheckbox = modal.querySelector('#zhihu-ai-auto-summarize');
+                            const minLengthInput = modal.querySelector('#zhihu-ai-min-answer-length');
+                            if (autoSumCheckbox) autoSumCheckbox.checked = await storage.get('AUTO_SUMMARIZE', false);
+                            if (minLengthInput) minLengthInput.value = await storage.get('MIN_ANSWER_LENGTH', 200);
+                            
+                            alert('配置导入成功！');
+                        }
+                    } catch (parseError) {
+                        alert('配置格式错误，请检查JSON格式是否正确');
+                    }
+                } catch (error) {
+                    console.error('导入配置失败:', error);
+                    alert('导入配置失败');
+                }
+            });
 
             modal.querySelector('#save-settings-btn').addEventListener('click', async () => {
                 const autoSum = modal.querySelector('#zhihu-ai-auto-summarize').checked;

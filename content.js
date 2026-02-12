@@ -37,6 +37,11 @@
         .zhihu-ai-answer-result-body { line-height: 1.8; color: #555; font-size: 14px; }
         .zhihu-ai-answer-result-close { margin-left: auto; background: none; border: none; color: #999; cursor: pointer; font-size: 20px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; }
         .zhihu-ai-answer-result-close:hover { background: rgba(0, 0, 0, 0.05); color: #666; }
+        .zhihu-ai-result-actions { display: flex; gap: 4px; margin-left: auto; }
+        .zhihu-ai-result-copy { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px; border-radius: 4px; transition: all 0.2s; }
+        .zhihu-ai-result-copy:hover { background: rgba(0, 0, 0, 0.05); }
+        .zhihu-ai-result-copy:disabled { cursor: not-allowed; opacity: 0.5; }
+        .zhihu-ai-result-copy:disabled:hover { background: none; }
         .zhihu-ai-article-result { margin: 24px 0; padding: 20px 24px; background: linear-gradient(135deg, #667eea12 0%, #764ba212 100%); border-left: 4px solid #667eea; border-radius: 8px; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1); animation: slideDown 0.3s ease; }
         .zhihu-ai-article-result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 16px; font-weight: 600; color: #667eea; }
         .zhihu-ai-article-result-header svg { width: 18px; height: 18px; flex-shrink: 0; }
@@ -453,7 +458,7 @@
             return button;
         }
 
-        createResultContainer(type) {
+        createResultContainer(type, insertTarget = null) {
             const container = document.createElement('div');
             const modelName = this.apiClient.model || 'AI';
             const titleMap = {
@@ -462,23 +467,93 @@
                 question: `AI 问题总结 (${modelName})`
             };
 
+            container._isComplete = false;
+            container._rawContent = '';
+            container._copyUrl = window.location.href;
+
+            // 对于回答，尝试获取具体回答链接
+            if (type === 'answer' && insertTarget) {
+                const answerItem = insertTarget.closest('.ContentItem.AnswerItem');
+                if (answerItem) {
+                    // 方式1: 从 meta 标签获取完整链接（取第二个元素）
+                    const metaUrls = answerItem.querySelectorAll('meta[itemprop="url"]');
+                    const metaUrl = metaUrls.length > 1 ? metaUrls[1] : metaUrls[0];
+                    
+                    if (metaUrl && metaUrl.content && metaUrl.content.includes('/answer/')) {
+                        container._copyUrl = metaUrl.content;
+                    }
+                    
+                    // 方式2: 如果还没有链接，从 name 属性和 data-zop 获取
+                    if (container._copyUrl === window.location.href) {
+                        const name = answerItem.getAttribute('name');
+                        const zopData = answerItem.dataset.zop;
+                        if (name && zopData) {
+                            try {
+                                const zop = JSON.parse(zopData.replace(/&quot;/g, '"'));
+                                if (zop.parent_token) {
+                                    container._copyUrl = `https://www.zhihu.com/question/${zop.parent_token}/answer/${name}`;
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                }
+            }
+
             container.className = 'zhihu-ai-answer-result';
             container.innerHTML = `
                 <div class="zhihu-ai-answer-result-header">
                     <svg viewBox="0 0 1024 1024" fill="currentColor"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"/><path d="M464 336a48 48 0 1 0 96 0 48 48 0 1 0-96 0z m72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z"/></svg>
                     <span class="zhihu-ai-result-title">${titleMap[type]}</span>
-                    <button class="zhihu-ai-answer-result-close" title="关闭">×</button>
+                    <div class="zhihu-ai-result-actions">
+                        <button class="zhihu-ai-result-copy" title="请等待AI总结完成后再复制" disabled>📋</button>
+                        <button class="zhihu-ai-answer-result-close" title="关闭">×</button>
+                    </div>
                 </div>
                 <div class="zhihu-ai-answer-result-body">
                     <div class="zhihu-ai-inline-loading"><div class="zhihu-ai-inline-spinner"></div><span>AI正在分析内容，请稍候...</span></div>
                 </div>
             `;
             container.querySelector('.zhihu-ai-answer-result-close').addEventListener('click', () => container.remove());
+            
+            container.querySelector('.zhihu-ai-result-copy').addEventListener('click', async () => {
+                if (!container._isComplete || !container._rawContent) {
+                    return;
+                }
+                
+                const now = new Date();
+                const timestamp = now.toLocaleString('zh-CN', { hour12: false });
+                const copyText = `${container._rawContent}\n\n---\n**来源**: ${container._copyUrl}\n**生成时间**: ${timestamp}`;
+                
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(copyText);
+                        const btn = container.querySelector('.zhihu-ai-result-copy');
+                        btn.textContent = '✅';
+                        setTimeout(() => btn.textContent = '📋', 1500);
+                    } else {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = copyText;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        const btn = container.querySelector('.zhihu-ai-result-copy');
+                        btn.textContent = '✅';
+                        setTimeout(() => btn.textContent = '📋', 1500);
+                    }
+                } catch (error) {
+                    console.error('复制失败:', error);
+                    alert('复制失败，请手动选择文本复制');
+                }
+            });
+            
             return container;
         }
 
         async showInlineSummary(contentOrPromise, type, displayElement, insertTarget, existingContainer = null, authorName = null) {
-            const container = existingContainer || this.createResultContainer(type);
+            const container = existingContainer || this.createResultContainer(type, insertTarget);
             const content = contentOrPromise instanceof Promise ? await contentOrPromise : contentOrPromise;
 
             if (authorName && type === 'answer') {
@@ -506,11 +581,23 @@
                     },
                     () => {
                         const fullText = authorPrefix + accumulated;
+                        container._rawContent = fullText;
+                        container._isComplete = true;
                         body.innerHTML = MarkdownParser.parse(fullText);
+                        // 启用复制按钮
+                        const copyBtn = container.querySelector('.zhihu-ai-result-copy');
+                        copyBtn.disabled = false;
+                        copyBtn.title = '复制Markdown格式';
                         resolve(container);
                     },
                     error => {
                         body.innerHTML = `<div class="zhihu-ai-inline-error">${error.message}</div>`;
+                        container._rawContent = '';
+                        container._isComplete = true;
+                        // 即使失败也启用按钮，让用户可以尝试复制错误信息
+                        const copyBtn = container.querySelector('.zhihu-ai-result-copy');
+                        copyBtn.disabled = false;
+                        copyBtn.title = '复制Markdown格式';
                         reject(error);
                     }
                 );
@@ -1027,6 +1114,7 @@
         constructor() {
             console.log('知乎AI总结浏览器插件已加载');
             this.ui = new UIManager();
+            this.addAnswerButtonsTimeout = null;
             this.init();
         }
 
@@ -1126,35 +1214,84 @@
             }, 2000);
 
             this.addAnswerButtons();
-            const observer = new MutationObserver(() => this.addAnswerButtons());
-            observer.observe(document.body, { childList: true, subtree: true });
+            
+            // Observe the answers container more specifically
+            const answersContainer = document.querySelector('.Question-mainColumn') || 
+                                  document.querySelector('.List') || 
+                                  document.body;
+            
+            const observer = new MutationObserver(() => {
+                // Debounce the calls to avoid race conditions
+                if (this.addAnswerButtonsTimeout) {
+                    clearTimeout(this.addAnswerButtonsTimeout);
+                }
+                this.addAnswerButtonsTimeout = setTimeout(() => this.addAnswerButtons(), 500);
+            });
+            observer.observe(answersContainer, { childList: true, subtree: true });
         }
 
         async addAnswerButtons() {
             const answers = document.querySelectorAll('.ContentItem.AnswerItem');
             const autoSummarize = await storage.get('AUTO_SUMMARIZE', false);
 
-            answers.forEach((answerItem, index) => {
-                if (answerItem.querySelector('.zhihu-ai-summary-btn-answer')) return;
-                const authorHead = answerItem.querySelector('.AuthorInfo-head');
-                if (!authorHead) return;
+            for (let index = 0; index < answers.length; index++) {
+                const answerItem = answers[index];
+                
+                if (answerItem.querySelector('.zhihu-ai-summary-btn-answer')) {
+                    continue;
+                }
+                
+                // Wait for AuthorInfo-head to be available
+                let authorHead = answerItem.querySelector('.AuthorInfo-head');
+                if (!authorHead) {
+                    try {
+                        // Use a more targeted selector within the answer item
+                        authorHead = await new Promise((resolve, reject) => {
+                            if (answerItem.querySelector('.AuthorInfo-head')) {
+                                resolve(answerItem.querySelector('.AuthorInfo-head'));
+                                return;
+                            }
+                            
+                            const observer = new MutationObserver(() => {
+                                const head = answerItem.querySelector('.AuthorInfo-head');
+                                if (head) {
+                                    observer.disconnect();
+                                    resolve(head);
+                                }
+                            });
+                            
+                            observer.observe(answerItem, { childList: true, subtree: true });
+                            setTimeout(() => {
+                                observer.disconnect();
+                                reject(new Error('Timeout'));
+                            }, 2000);
+                        });
+                        
+                        if (!authorHead) {
+                            continue;
+                        }
+                    } catch (error) {
+                        continue;
+                    }
+                }
 
                 const authorLink = answerItem.querySelector('.AuthorInfo-head a.UserLink-link');
                 const authorName = authorLink ? authorLink.innerText.trim() : '匿名用户';
 
                 const button = this.ui.createButton(async (event) => {
+                    // 确保这是真实的点击事件
+                    const isManualClick = event && event.isTrusted !== false;
                     const existingPanel = answerItem.querySelector('.zhihu-ai-side-panel');
                     if (existingPanel) {
                         existingPanel.remove();
                     }
 
-                    const isManualClick = event && event.isTrusted !== false;
                     button.classList.add('loading');
 
                     try {
                         const content = await ContentExtractor.extractAnswer(answerItem);
 
-                        const container = this.ui.createResultContainer('answer');
+                        const container = this.ui.createResultContainer('answer', answerItem);
                         container._authorName = authorName;
 
                         if (!content.content) {
@@ -1199,9 +1336,16 @@
                 authorHead.appendChild(button);
 
                 if (autoSummarize) {
-                    setTimeout(() => button.click(), 1000 + index * 500);
+                    setTimeout(() => {
+                        const clickEvent = new MouseEvent('click', {
+                            bubbles: true,
+                            cancelable: true,
+                            isTrusted: false
+                        });
+                        button.dispatchEvent(clickEvent);
+                    }, 1000 + index * 500);
                 }
-            });
+            }
         }
     }
 

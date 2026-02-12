@@ -140,7 +140,6 @@
         .zhihu-ai-answer-result-body .markdown-table tr:hover, .zhihu-ai-article-result-body .markdown-table tr:hover, .zhihu-ai-inline-body .markdown-table tr:hover { background: #f9f9f9; }
     `;
 
-    // Markdown Parser Class
     class MarkdownParser {
         static parse(markdown) {
             let html = markdown.replace(/\n{3,}/g, '\n\n');
@@ -222,7 +221,6 @@
         }
     }
 
-    // Content Extractor Class
     class ContentExtractor {
         static extractArticle() {
             const title = document.querySelector('h1.Post-Title, .Post-Title')?.innerText || '';
@@ -293,7 +291,6 @@
         }
     }
 
-    // API Client Class
     class APIClient {
         constructor() {
             this.loadCurrentAccount();
@@ -325,7 +322,7 @@
                 } else {
                     this.apiKey = '';
                     this.apiUrl = 'https://api.openai.com/v1/chat/completions';
-                    this.model = 'gpt-4o-mini';
+                    this.model = 'gpt-4.1-mini';
                 }
             } else {
                 const currentAccount = accounts.find(acc => acc.id === currentAccountId) || accounts[0];
@@ -436,7 +433,6 @@
         }
     }
 
-    // UI Manager Class
     class UIManager {
         constructor() {
             this.apiClient = new APIClient();
@@ -470,31 +466,14 @@
             container._isComplete = false;
             container._rawContent = '';
             container._copyUrl = window.location.href;
-
-            // 对于回答，尝试获取具体回答链接
+            
             if (type === 'answer' && insertTarget) {
                 const answerItem = insertTarget.closest('.ContentItem.AnswerItem');
                 if (answerItem) {
-                    // 方式1: 从 meta 标签获取完整链接（取第二个元素）
                     const metaUrls = answerItem.querySelectorAll('meta[itemprop="url"]');
-                    const metaUrl = metaUrls.length > 1 ? metaUrls[1] : metaUrls[0];
-                    
+                    const metaUrl = metaUrls.length > 1 ? metaUrls[1] : null;
                     if (metaUrl && metaUrl.content && metaUrl.content.includes('/answer/')) {
                         container._copyUrl = metaUrl.content;
-                    }
-                    
-                    // 方式2: 如果还没有链接，从 name 属性和 data-zop 获取
-                    if (container._copyUrl === window.location.href) {
-                        const name = answerItem.getAttribute('name');
-                        const zopData = answerItem.dataset.zop;
-                        if (name && zopData) {
-                            try {
-                                const zop = JSON.parse(zopData.replace(/&quot;/g, '"'));
-                                if (zop.parent_token) {
-                                    container._copyUrl = `https://www.zhihu.com/question/${zop.parent_token}/answer/${name}`;
-                                }
-                            } catch (e) {}
-                        }
                     }
                 }
             }
@@ -806,7 +785,7 @@
                                 </div>
                                 <div class="zhihu-ai-config-item">
                                     <label class="zhihu-ai-config-label">模型名称:</label>
-                                    <input type="text" class="zhihu-ai-config-input" id="account-model" value="${sourceAccount.model}" placeholder="gpt-4o-mini">
+                                    <input type="text" class="zhihu-ai-config-input" id="account-model" value="${sourceAccount.model}" placeholder="gpt-4.1-mini">
                                 </div>
                                 <div id="test-result-container"></div>
                                 <div class="zhihu-ai-config-btn-group">
@@ -906,7 +885,7 @@
                                 </div>
                                 <div class="zhihu-ai-config-item">
                                     <label class="zhihu-ai-config-label">模型名称:</label>
-                                    <input type="text" class="zhihu-ai-config-input" id="account-model" value="${editAccount?.model || ''}" placeholder="gpt-4o-mini">
+                                    <input type="text" class="zhihu-ai-config-input" id="account-model" value="${editAccount?.model || ''}" placeholder="gpt-4.1-mini">
                                 </div>
                                 <div id="test-result-container"></div>
                                 <div class="zhihu-ai-config-btn-group">
@@ -1109,7 +1088,6 @@
         }
     }
 
-    // Main Application Class
     class ZhihuAISummary {
         constructor() {
             console.log('知乎AI总结浏览器插件已加载');
@@ -1214,14 +1192,11 @@
             }, 2000);
 
             this.addAnswerButtons();
-            
-            // Observe the answers container more specifically
             const answersContainer = document.querySelector('.Question-mainColumn') || 
                                   document.querySelector('.List') || 
                                   document.body;
             
             const observer = new MutationObserver(() => {
-                // Debounce the calls to avoid race conditions
                 if (this.addAnswerButtonsTimeout) {
                     clearTimeout(this.addAnswerButtonsTimeout);
                 }
@@ -1241,11 +1216,9 @@
                     continue;
                 }
                 
-                // Wait for AuthorInfo-head to be available
                 let authorHead = answerItem.querySelector('.AuthorInfo-head');
                 if (!authorHead) {
                     try {
-                        // Use a more targeted selector within the answer item
                         authorHead = await new Promise((resolve, reject) => {
                             if (answerItem.querySelector('.AuthorInfo-head')) {
                                 resolve(answerItem.querySelector('.AuthorInfo-head'));
@@ -1279,7 +1252,6 @@
                 const authorName = authorLink ? authorLink.innerText.trim() : '匿名用户';
 
                 const button = this.ui.createButton(async (event) => {
-                    // 确保这是真实的点击事件
                     const isManualClick = event && event.isTrusted !== false;
                     const existingPanel = answerItem.querySelector('.zhihu-ai-side-panel');
                     if (existingPanel) {
@@ -1349,7 +1321,6 @@
         }
     }
 
-    // Initialize application
     let appInstance;
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
@@ -1359,7 +1330,6 @@
         appInstance = new ZhihuAISummary();
     }
 
-    // Listen for messages from popup
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'openSettings') {
             if (appInstance && appInstance.ui) {

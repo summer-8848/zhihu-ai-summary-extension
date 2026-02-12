@@ -1,27 +1,24 @@
 // Popup script for Zhihu AI Summary Extension
 
-// Helper function to get data from chrome.storage
-function getStorage(key, defaultValue) {
-    return new Promise((resolve) => {
-        chrome.storage.sync.get({[key]: defaultValue}, (result) => {
-            resolve(result[key]);
+// ConfigManager for popup
+class ConfigManager {
+    async get(key, defaultValue = null) {
+        return new Promise((resolve) => {
+            chrome.storage.sync.get({[key]: defaultValue}, (result) => {
+                resolve(result[key]);
+            });
         });
-    });
-}
-
-// Helper function to set data to chrome.storage
-function setStorage(key, value) {
-    return new Promise((resolve) => {
-        chrome.storage.sync.set({[key]: value}, resolve);
-    });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const configManager = new ConfigManager();
+    
     // Check configuration status
-    const accounts = await getStorage('AI_ACCOUNTS', []);
-    const currentAccountId = await getStorage('CURRENT_ACCOUNT_ID', '');
-    const autoSummarize = await getStorage('AUTO_SUMMARIZE', false);
-    const minAnswerLength = await getStorage('MIN_ANSWER_LENGTH', 200);
+    const accounts = await configManager.get('AI_ACCOUNTS', []);
+    const currentAccountId = await configManager.get('CURRENT_ACCOUNT_ID', '');
+    const autoSummarize = await configManager.get('AUTO_SUMMARIZE', false);
+    const minAnswerLength = await configManager.get('MIN_ANSWER_LENGTH', 200);
     const statusContainer = document.getElementById('status-container');
 
     if (accounts.length > 0) {

@@ -1,5 +1,11 @@
 # 知乎AI总结助手 - 浏览器扩展版
 
+本项目已使用 Monorepo 架构重构，极大提升了开发和发版效率，当前仓库已不再维护，请使用新版[zhihu-ai-summary](https://github.com/summer-8848/zhihu-ai-summary)。
+
+---
+---
+---
+
 为知乎文章、问题、回答添加AI总结功能，调用 ChatGPT/OpenAI 兼容 API 进行智能总结。
 
 ## 功能特点
